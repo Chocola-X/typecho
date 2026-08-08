@@ -99,7 +99,7 @@ class Init extends Widget
         } else {
             Cookie::setOptions([
                 'secure' => $this->request->isSecure(),
-                'httponly' => true
+                'httponly' => false
             ]);
         }
 

@@ -43,7 +43,7 @@ class Cookie
      * @var bool
      * @access private
      */
-    private static bool $httponly = true;
+    private static bool $httponly = false;
 
     /**
      * 获取前缀
@@ -136,8 +136,9 @@ class Cookie
      * @param string $key 指定的参数
      * @param mixed $value 设置的值
      * @param integer $expire 过期时间,默认为0,表示随会话时间结束
+     * @param bool|null $httponly 是否仅通过HTTP协议访问,null表示使用全局配置
      */
-    public static function set(string $key, $value, int $expire = 0)
+    public static function set(string $key, $value, int $expire = 0, ?bool $httponly = null)
     {
         $key = self::$prefix . $key;
         $_COOKIE[$key] = $value;
@@ -148,7 +149,7 @@ class Cookie
             self::$path,
             self::$domain,
             self::$secure,
-            self::$httponly
+            $httponly ?? self::$httponly
         );
     }
 
