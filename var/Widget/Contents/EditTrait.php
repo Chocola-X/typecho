@@ -358,7 +358,7 @@ trait EditTrait
         $created = $this->options->time;
         if ($this->request->is('created')) {
             $created = $this->request->get('created');
-        } elseif ($this->request->is('date')) {
+        } elseif ($this->request->is('date') && strlen((string)$this->request->get('date', '')) > 0) {
             $dstOffset = $this->request->get('dst', 0);
             $timezoneSymbol = $this->options->timezone >= 0 ? '+' : '-';
             $timezoneOffset = abs($this->options->timezone);
@@ -377,12 +377,12 @@ trait EditTrait
 
             $created = mktime($hour, $min, $second, $month, $day, $year)
                 - $this->options->timezone + $this->options->serverTimezone;
-        } elseif ($this->have() && $this->created > 0) {
-            //如果是修改文章
+        } elseif ($this->have() && $this->created > 0 && !preg_match("/_draft$/", $this->type)) {
+            //如果是修改已发布文章, 保持原发布时间不变
             $created = $this->created;
         } elseif ($this->request->is('do=save')) {
-            // 如果是草稿而且没有任何输入则保持原状
-            $created = 0;
+            // 保存草稿时保持原创建时间
+            $created = ($this->have() && $this->created > 0) ? $this->created : 0;
         }
 
         return $created;
